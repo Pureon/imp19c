@@ -1,0 +1,575 @@
+﻿pol_mission = {
+	header = "pol_mission_image"
+	icon = "pol_mission_icon"
+
+	repeatable = yes
+
+	chance = {}
+
+	ai_chance = {
+		factor = 0
+	}
+
+	potential = {
+		tag = POL
+		is_subject = yes
+		exists = overlord
+		NOT = { has_variable = pol_mission_finished_variable }
+	}
+
+	abort = {
+		OR = {
+			NOT = {
+				tag = POL
+			}
+			custom_tooltip = {
+				text = pol_mission_abort_tt
+				has_variable = pol_rebel_failed_variable
+			}
+			ai_mission_back_out_trigger = yes
+		}
+	}
+
+	on_start = {
+		start_mission_ai_effect = yes
+	}
+
+	on_abort = {
+		if = {
+    		limit = { has_variable = pol_loyal_variable }
+    		remove_variable = pol_loyal_variable
+    	}
+		if = {
+    		limit = { has_variable = pol_rebel_variable }
+    		remove_variable = pol_rebel_variable
+    	}
+		if = {
+    		limit = { has_variable = pol_rebel_failed_variable }
+    		remove_variable = pol_rebel_failed_variable
+    	}
+	}
+
+	on_completion = {
+		complete_mission_effect = yes
+		if = {
+    		limit = { has_variable = pol_loyal_variable }
+    		remove_variable = pol_loyal_variable
+    	}
+		if = {
+    		limit = { has_variable = pol_rebel_variable }
+    		remove_variable = pol_rebel_variable
+    	}
+		if = {
+    		limit = { has_variable = pol_rebel_failed_variable }
+    		remove_variable = pol_rebel_failed_variable
+    	}
+	}
+	
+############################# Missions #####################################
+
+	pol_mission_after_the_congress = {		# After the Congress
+		icon = "task_political"
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+			political_influence >= 20
+		}
+
+		bypass = {
+			NOT = {
+				exists = c:RUS
+			}
+		}
+
+		on_completion = {
+        	current_ruler = {
+				add_popularity = -15
+			}
+			add_political_influence = -20
+		} 
+	}
+	
+############################# LOYAL #####################################
+	
+	pol_mission_at_tsars_service = {		# Loyal 1
+		icon = "task_economical"
+		
+		requires = { pol_mission_after_the_congress } 
+		
+    	duration = 2		# TODO 365
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		on_start = {
+        	current_ruler = {
+				add_popularity = -20
+			}
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+    		c:RUS = {
+		    	opinion = {
+		    		target = root
+		    		value >= 30
+		    	}
+	    	}
+		}
+
+		bypass = {
+			has_variable = pol_rebel_variable
+		}
+
+		on_completion = {
+    		c:RUS = {
+		    	add_opinion = {
+		    		modifier = athenian_mission_04_athenian_subject
+		    		target = root
+		    	}
+	    	}
+			set_variable = {
+				name = pol_loyal_variable
+			}
+		} 
+	}
+	
+	pol_mission_demanding_friendship = {		# Loyal 2
+		icon = "task_diplomatic"
+		
+		requires = { pol_mission_at_tsars_service } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+    		c:RUS = {
+		    	opinion = {
+		    		target = root
+		    		value >= 60
+		    	}
+	    	}
+			treasury >= 50 
+		}
+
+		bypass = {
+			has_variable = pol_rebel_variable
+		}
+
+		on_completion = {
+			add_treasury = -50
+	    	p:6831 = {
+				define_pop = {
+					type = citizen
+					culture = c:RUS.culture
+					religion = c:RUS.religion
+				}
+	    	}
+		} 
+	}
+	
+	pol_mission_this_is_the_way = {		# Loyal 3
+		icon = "task_political"
+		
+		requires = { pol_mission_demanding_friendship } 
+		
+    	duration = 2		# TODO 365
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+    		c:RUS = {
+		    	opinion = {
+		    		target = root
+		    		value >= 100
+		    	}
+	    	}
+		}
+
+		bypass = {
+			has_variable = pol_rebel_variable
+		}
+
+		on_completion = {
+			add_stability = 20
+			current_ruler = { add_corruption = subtract_corruption_medium }
+		} 
+	}
+	
+	pol_mission_removing_bordergore = {		# Loyal 4
+		icon = "task_diplomatic"
+		
+		requires = { pol_mission_this_is_the_way } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		highlight = {
+			scope:province = {
+				is_in_region = region_Bialystok
+			}
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+		}
+
+		bypass = {
+			has_variable = pol_rebel_variable
+		}
+
+		on_completion = {
+        	current_ruler = {
+				add_popularity = 20
+			}
+			p:6992 = {set_owned_by = root }
+			p:7770 = {set_owned_by = root }
+			p:10016 = {set_owned_by = root }
+			p:2630 = {set_owned_by = root }
+		} 
+	}
+	
+	pol_mission_siberian_trade = {		# Loyal 5
+		icon = "task_diplomatic"
+		
+		requires = { pol_mission_removing_bordergore } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {		# TODO Change to RUS trade when trade goods exist.
+		    not = { war_with = c:RUS }
+			can_pay_price = send_gift
+			capital_scope = {
+        		incoming_trade_routes >= 8
+        	}
+		}
+
+		bypass = {
+			has_variable = pol_rebel_variable
+		}
+
+		on_completion = {
+			c:RUS = {
+				add_opinion = {
+					modifier = carthage_mission_trade_cyrene_relations_opinion
+					target = root
+				}
+			}
+			pay_price = send_gift
+		} 
+	}
+	
+	pol_mission_political_stability = {		# Loyal 6
+		icon = "task_economical"
+		
+		requires = { pol_mission_removing_bordergore } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+			stability >= 70
+			political_influence >= 30
+		}
+
+		bypass = {
+			has_variable = pol_rebel_variable
+		}
+
+		on_completion = {
+			add_political_influence = -30
+        	c:RUS = {
+        		add_opinion = {
+        			modifier = minor_foreign_gift
+        			target = root
+        		}
+        	}
+		} 
+	}
+	
+	pol_mission_zartoryskis_plan = {		# Loyal 7
+		icon = "task_political"
+		
+		final = yes
+		
+		requires = { pol_mission_political_stability } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+		}
+
+		bypass = {
+			OR = {
+				has_variable = pol_rebel_variable
+				has_variable = pol_mission_equal_terms_variable
+			}
+		}
+
+		on_completion = {
+			complete_mission_effect = yes
+			set_variable = {
+				name = pol_mission_finished_variable
+			}
+			set_variable = {
+				name = pol_mission_zartoryskis_variable
+			}
+			c:RUS = {
+				add_opinion = {
+					modifier = border_friends
+					target = root
+				}
+			}
+	    	p:6831 = {
+				define_pop = {
+					type = citizen
+					culture = c:RUS.culture
+					religion = c:RUS.religion
+				}
+			}
+		}
+	}
+	
+	pol_mission_on_equal_terms  = {		# Loyal 8
+		icon = "task_diplomatic"
+		
+		final = yes
+		
+		requires = { pol_mission_political_stability } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+		}
+
+		bypass = {
+			OR = {
+				has_variable = pol_rebel_variable
+				has_variable = pol_mission_zartoryskis_variable
+			}
+		}
+
+		on_completion = {
+			complete_mission_effect = yes
+			overlord = { release_subject = ROOT }
+			add_alliance = c:RUS
+			set_variable = {
+				name = pol_mission_finished_variable
+			}
+			set_variable = {
+				name = pol_mission_equal_terms_variable
+			}
+		}
+	}
+	
+	
+############################# Rebelious #####################################
+	
+	pol_mission_poland_not_lost = {		# Rebelious 1
+		icon = "task_conquest"
+		
+    	duration = 2		# TODO 365
+		
+		requires = { pol_mission_after_the_congress } 
+		
+		potential = {
+			exists = c:RUS
+		}
+		
+		allow = {
+		    not = { war_with = c:RUS }
+			c:RUS = {
+		    	opinion = {
+		    		target = root
+		    		value <= 100		# TODO make 0
+		    	}
+	    	}
+		}
+
+		bypass = {
+			has_variable = pol_loyal_variable
+		}
+
+		on_completion = {
+			set_variable = {
+				name = pol_rebel_variable
+			}
+			add_stability = -10
+			c:RUS = {
+				add_opinion = {
+					modifier = demanding_overlord
+					target = root
+				}
+			}
+		} 
+	}
+	
+	pol_mission_cant_buy_us = {		# Rebelious 2
+		icon = "task_expansion"
+		
+		requires = { pol_mission_poland_not_lost } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+			political_influence >= 30
+		}
+
+		bypass = {
+			has_variable = pol_loyal_variable
+		}
+
+		on_completion = {
+			add_political_influence = -30
+		} 
+	}
+	
+	pol_mission_dreams_of_freedom = {		# Rebelious 3
+		icon = "task_conquest"
+		
+		requires = { pol_mission_cant_buy_us } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+			c:RUS = {
+		    	opinion = {
+		    		target = root
+		    		value <= 100		# TODO make -10
+		    	}
+	    	}
+		}
+
+		bypass = {
+			has_variable = pol_loyal_variable
+		}
+
+		on_completion = {
+            add_country_modifier = {
+                name = soldier_farmers
+                duration = 3650
+            }
+		} 
+	}
+	
+	pol_mission_get_ready = {		# Rebelious 4
+		icon = "task_economical"
+		
+    	duration = 2		# TODO 365
+		
+		requires = { pol_mission_dreams_of_freedom } 
+		
+		potential = {
+			exists = c:RUS
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+			treasury >= 120
+		}
+		
+		on_start = {
+			add_treasury = -120
+		}
+
+		bypass = {
+			has_variable = pol_loyal_variable
+		}
+
+		on_completion = {
+            add_country_modifier = {
+                name = grain_secured
+                duration = 3650
+            }
+		} 
+	}
+	
+	pol_mission_sweet_freedom = {		# Rebelious 5
+		icon = "task_conquest"
+		
+		final = yes
+		
+    	duration = 2		# TODO 365
+		
+		requires = { pol_mission_get_ready } 
+		
+		potential = {
+			is_subject = yes
+			exists = overlord
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+		}
+
+		bypass = {
+			OR = {
+				has_variable = pol_loyal_variable
+				has_variable = pol_rebel_failed_variable
+			}
+		}
+
+		on_completion = {
+			overlord = { release_subject = ROOT }
+            add_country_modifier = {
+                name = venerated_deity_modifier
+                duration = 3650
+            }
+			set_variable = {
+				name = pol_mission_finished_variable
+			}
+		} 
+	}
+	
+	pol_mission_fail = {		# Rebelious 6 TODO move to event
+		icon = "task_political"
+		
+		requires = { pol_mission_get_ready } 
+		
+		potential = {
+			is_subject = yes
+			exists = overlord
+		}
+
+		allow = {
+		    not = { war_with = c:RUS }
+		}
+
+		bypass = {
+			has_variable = pol_loyal_variable
+		}
+
+		on_completion = {
+			set_variable = {
+				name = pol_rebel_failed_variable
+			}
+		} 
+	}
+	
+}
