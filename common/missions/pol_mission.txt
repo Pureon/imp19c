@@ -73,10 +73,16 @@
 		potential = {
 			exists = c:RUS
 		}
+		
+    	duration = 180
 
 		allow = {
 		    not = { war_with = c:RUS }
 			political_influence >= 20
+		}
+		
+		on_start = {
+			add_political_influence = -20
 		}
 
 		bypass = {
@@ -86,10 +92,7 @@
 		}
 
 		on_completion = {
-        	current_ruler = {
-				add_popularity = -15
-			}
-			add_political_influence = -20
+			add_stability = -10
 		} 
 	}
 	
@@ -100,16 +103,10 @@
 		
 		requires = { pol_mission_after_the_congress } 
 		
-    	duration = 2		# TODO 365
+    	duration = 180
 		
 		potential = {
 			exists = c:RUS
-		}
-
-		on_start = {
-        	current_ruler = {
-				add_popularity = -20
-			}
 		}
 
 		allow = {
@@ -120,6 +117,11 @@
 		    		value >= 30
 		    	}
 	    	}
+			treasury >= 50 
+		}
+		
+		on_start = {
+			add_treasury = -50
 		}
 
 		bypass = {
@@ -127,6 +129,7 @@
 		}
 
 		on_completion = {
+			add_stability = -10
     		c:RUS = {
 		    	add_opinion = {
 		    		modifier = athenian_mission_04_athenian_subject
@@ -144,6 +147,8 @@
 		
 		requires = { pol_mission_at_tsars_service } 
 		
+    	duration = 180
+		
 		potential = {
 			exists = c:RUS
 		}
@@ -159,12 +164,16 @@
 			treasury >= 50 
 		}
 
+		on_start = {
+			add_treasury = -50
+		}
+
 		bypass = {
 			has_variable = pol_rebel_variable
 		}
 
 		on_completion = {
-			add_treasury = -50
+			add_stability = -10
 	    	p:6831 = {
 				define_pop = {
 					type = citizen
@@ -180,7 +189,7 @@
 		
 		requires = { pol_mission_demanding_friendship } 
 		
-    	duration = 2		# TODO 365
+    	duration = 180
 		
 		potential = {
 			exists = c:RUS
@@ -200,7 +209,7 @@
 		}
 
 		on_completion = {
-			add_stability = 20
+			add_stability = -10
 			current_ruler = { add_corruption = subtract_corruption_medium }
 		} 
 	}
@@ -209,6 +218,8 @@
 		icon = "task_diplomatic"
 		
 		requires = { pol_mission_this_is_the_way } 
+		
+    	duration = 180
 		
 		potential = {
 			exists = c:RUS
@@ -244,6 +255,8 @@
 		
 		requires = { pol_mission_removing_bordergore } 
 		
+    	duration = 180
+		
 		potential = {
 			exists = c:RUS
 		}
@@ -276,6 +289,8 @@
 		
 		requires = { pol_mission_removing_bordergore } 
 		
+    	duration = 180
+		
 		potential = {
 			exists = c:RUS
 		}
@@ -286,12 +301,15 @@
 			political_influence >= 30
 		}
 
+		on_start = {
+			add_political_influence = -30
+		}
+
 		bypass = {
 			has_variable = pol_rebel_variable
 		}
 
 		on_completion = {
-			add_political_influence = -30
         	c:RUS = {
         		add_opinion = {
         			modifier = minor_foreign_gift
@@ -303,6 +321,8 @@
 	
 	pol_mission_zartoryskis_plan = {		# Loyal 7
 		icon = "task_political"
+		
+    	duration = 180
 		
 		final = yes
 		
@@ -354,6 +374,8 @@
 		
 		requires = { pol_mission_political_stability } 
 		
+    	duration = 180
+		
 		potential = {
 			exists = c:RUS
 		}
@@ -388,7 +410,7 @@
 	pol_mission_poland_not_lost = {		# Rebelious 1
 		icon = "task_conquest"
 		
-    	duration = 2		# TODO 365
+    	duration = 180		# TODO 365
 		
 		requires = { pol_mission_after_the_congress } 
 		
@@ -481,7 +503,7 @@
 	pol_mission_get_ready = {		# Rebelious 4
 		icon = "task_economical"
 		
-    	duration = 2		# TODO 365
+    	duration = 180		# TODO 365
 		
 		requires = { pol_mission_dreams_of_freedom } 
 		
@@ -515,7 +537,7 @@
 		
 		final = yes
 		
-    	duration = 2		# TODO 365
+    	duration = 180		# TODO 365
 		
 		requires = { pol_mission_get_ready } 
 		
